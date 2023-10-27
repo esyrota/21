@@ -16,7 +16,6 @@ type DeckEventData = {
 }
 
 export class Deck extends Observable<DeckEvent, DeckEventData> {
-  
   private cards: Card[]
   constructor(cards: Card[] = Card.all) {
     super()
@@ -53,7 +52,7 @@ export class Deck extends Observable<DeckEvent, DeckEventData> {
     const cards = this.shiftCards(amount)
     this.trigger(DeckEvent.AMOUNT, this.state)
     if (!this.hasCards()) this.trigger(DeckEvent.EMPTY, undefined)
-    
+
     return cards
   }
 

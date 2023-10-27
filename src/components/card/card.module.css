@@ -1,23 +1,28 @@
 .card {
+  --gap: 2rem;
+  --middle: calc(var(--count) * 0.5 * var(--gap));
+  --x: calc(var(--index) * var(--gap) - var(--middle));  
   opacity: 0;
-  transform: translateY(10vh);
   margin: 0;
   padding: 0;
-  height: 12rem;
+  max-height: min(25vh, 100%);
   z-index: var(--index, 0);
   animation: appear 1s ease 100ms 1;
   animation-fill-mode: forwards;
   animation-delay: calc(var(--index) * 100ms);
+  box-shadow: 0px 9px 30px rgba(255, 149, 5, 0.1);
+  border-radius: 0.3rem;
+  transform: translateX(var(--x)) translateY(10vh);
 }
 
 @keyframes appear {
   0% {
-    transform: translateY(5vh);
+    transform: translateX(var(--x)) translateY(5vh);
     opacity: 0.5;
   }
-  
+
   100% {
-    transform: translateY(0);
+    transform: translateX(var(--x)) translateY(0);
     opacity: 1;
   }
 }

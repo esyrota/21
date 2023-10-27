@@ -2,6 +2,7 @@ import { CSSProperties, ComponentProps, FC, useEffect, useState } from 'react'
 import { Player, PlayerEvent } from '../../core/Player'
 import { Card as CardType } from '../../core/Card'
 import { Card } from '../card'
+import styles from './hand.module.css'
 
 interface Props extends ComponentProps<'div'> {
   player: Player
@@ -29,7 +30,7 @@ export const PlayerHand: FC<Props> = ({ player, ...props }) => {
 
   return (
     <div {...props}>
-      <div className="cards" style={{ '--count': cards.length } as CSSProperties}>
+      <div className={styles.hand} style={{ '--count': cards.length } as CSSProperties}>
         {cards.map((card, index) => (
           <Card
             key={card.toString()}

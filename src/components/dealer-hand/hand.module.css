@@ -1,0 +1,17 @@
+.hand {
+  margin: 0;
+  display: grid;
+  place-content: center;
+  position: relative;
+}
+.hand > * {
+  grid-row: 1;
+  grid-column: 1;
+}
+.sum {
+  position: absolute;
+  left: 0;
+  bottom: -1rem;
+  right: 0;
+  margin: 0 auto;
+}

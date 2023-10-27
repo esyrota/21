@@ -3,6 +3,7 @@ import { Dealer, DealerEvent } from '../../core/Dealer'
 import { Card as CardType } from '../../core/Card'
 import { DealerResult } from '../../core/PlayerResult'
 import { Card } from '../card'
+import styles from './hand.module.css'
 
 interface Props extends ComponentProps<'div'> {
   dealer: Dealer
@@ -21,7 +22,7 @@ export const DealerHand: FC<Props> = ({ dealer, ...props }) => {
         setResult(data)
       }),
       dealer.on(DealerEvent.GOT_CARDS, ({ data: { cards } }) => {
-        setCards(CardType.parseAll(cards))
+        setCards((currentCards) => [...currentCards, ...CardType.parseAll(cards)])
       }),
       dealer.on(DealerEvent.RESET_CARDS, () => {
         setCards([])
@@ -35,16 +36,11 @@ export const DealerHand: FC<Props> = ({ dealer, ...props }) => {
 
   return (
     <div {...props}>
-      <div className="sum">Total: {dealer.result.total}</div>
+      <div className={styles.sum}>{dealer.result.total}</div>
       {result?.busted && <div className="busted">BUSTED</div>}
-      <div className="cards" style={{ '--count': cards.length } as CSSProperties}>
+      <div className={styles.hand} style={{ '--count': cards.length } as CSSProperties}>
         {cards.map((card, index) => (
-          <Card
-            key={card.toString()}
-            card={card}
-            className="card"
-            style={{ '--index': index } as CSSProperties}
-          />
+          <Card key={card.toString()} card={card} style={{ '--index': index } as CSSProperties} />
         ))}
       </div>
     </div>

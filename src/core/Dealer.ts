@@ -52,8 +52,8 @@ export class Dealer extends Observable<DealerEvent, DealerEventData> {
   }
 
   resetCards() {
+    this.hand.reset()
     this.trigger(DealerEvent.RESET_CARDS, undefined)
-    this.deck.add(this.hand.reset())
   }
 
   private hit(amount = 1) {

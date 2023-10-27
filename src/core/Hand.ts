@@ -10,8 +10,8 @@ export class Hand {
   constructor(str?: string) {
     if (str) this.hit(Card.parseAll(str))
   }
- 
-  get total () {
+
+  get total() {
     return this.isBust ? 0 : this.isBlackjack ? 21 : this.sum
   }
 
@@ -44,8 +44,8 @@ export class Hand {
     return sum
   }
 
-   // check if there are any wild cards
-   private hasWilds() {
+  // check if there are any wild cards
+  private hasWilds() {
     return this.cards.some((card) => card.isWild)
   }
 
@@ -60,5 +60,4 @@ export class Hand {
   get cardString() {
     return this.cards.join(',')
   }
-
 }

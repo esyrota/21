@@ -25,15 +25,16 @@ describe('Card', () => {
   })
 
   describe('throws on invalid', () => {
-    test('A', () => expect(() => { 
-      // @ts-expect-error testing invalid input
-      new Card('A') 
-    }).toThrow())
+    test('A', () =>
+      expect(() => {
+        // @ts-expect-error testing invalid input
+        new Card('A')
+      }).toThrow())
   })
 
   describe(`values`, () => {
     for (const [card, value] of pairs) {
-        test(`${card} value is ${value}`, () => expect(new Card(card).valueOf()).toBe(value))
+      test(`${card} value is ${value}`, () => expect(new Card(card).valueOf()).toBe(value))
     }
   })
 

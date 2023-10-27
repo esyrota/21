@@ -39,7 +39,7 @@ type RoundEventData = {
   }
   [RoundEvent.UPDATE]: RoundState
   [RoundEvent.WINNER]: { names: string[] }
-  [RoundEvent.BUSTED]: RoundState
+  [RoundEvent.BUSTED]: undefined
   [RoundEvent.END]: undefined
 }
 
@@ -75,16 +75,19 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
 
   // play a round of the game
   async play(timeout: number = 0) {
+    this.reset()
     this.start()
-    this.deal(timeout)
+    await delay(timeout)
+    await this.deal(timeout)
     await delay(timeout)
     const results = await this.playPlayers(timeout)
-    await delay(timeout)
 
     if (resultsHasBlackjack(results)) {
       this.declareWinner(results)
+      return
     }
 
+    await delay(timeout)
     const dealerResult = await this.dealer.play(timeout)
     await delay(timeout)
 
@@ -93,17 +96,17 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
     } else {
       this.declareWinner([...results, dealerResult])
     }
+  }
 
-    await delay(timeout)
-    this.end()
+  private reset() {
+    this.deck.reset()
+    this.players.forEach((player) => player.resetCards())
+    this.dealer.resetCards()
   }
 
   // deal cards to all players
-  async deal(timeout: number = 0) {
-    this.deck.reset()
-    await delay(timeout)
+  private async deal(timeout: number = 0) {
     for await (const player of this.players) {
-      player.resetCards()
       player.takeCards(this.deck.draw(2))
       await delay(timeout)
     }
@@ -150,16 +153,18 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
     }
     const bestResult = getMaximumTotal(results)
     const winners = results.filter((result) => !result.busted && result.total === bestResult)
+
     this.trigger(RoundEvent.WINNER, {
       names: winners.map((result) => (isPlayerResult(result) ? result.name : this.dealer.name)),
     })
   }
 
-  private declareBusted() {}
+  private declareBusted() {
+    this.trigger(RoundEvent.BUSTED, undefined)
+  }
 
-  private end() {
+  end() {
+    this.reset()
     this.trigger(RoundEvent.END, undefined)
-    this.players.forEach((player) => player.hand.reset())
-    this.deck.reset()
   }
 }

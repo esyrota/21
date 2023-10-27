@@ -1,5 +1,3 @@
-
-
 export interface Result {
   winner?: boolean
   busted?: boolean
@@ -7,18 +5,18 @@ export interface Result {
 }
 
 export interface DealerResult extends Result {
-    dealer: true
+  dealer: true
 }
 
 export interface PlayerResult extends Result {
-    name: string
+  name: string
 }
 
-export function isDealerResult (result: Result): result is DealerResult {
-    return !!(result as DealerResult).dealer 
+export function isDealerResult(result: Result): result is DealerResult {
+  return !!(result as DealerResult).dealer
 }
-export function isPlayerResult (result: Result): result is PlayerResult {
-    return !isDealerResult(result)
+export function isPlayerResult(result: Result): result is PlayerResult {
+  return !isDealerResult(result)
 }
 
 export function resultsHasBlackjack(results: Result[]) {

@@ -39,18 +39,21 @@
 
 .table {
   display: grid;
-  grid-template-areas: 
-    "dealer"  
-    "desk"  
-    "player";
+  grid-template-areas:
+    'dealer'
+    'desk'
+    'player';
 
-  grid-template-rows: min-content 1fr min-content;
+  grid-template-rows: 25% 50% 25%;
   width: 100vw;
+  max-width: 100vw;
   height: 100vh;
+  max-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 .dealer {
   grid-area: dealer;
-  min-height: 10rem;
 }
 .desk {
   grid-area: desk;
@@ -59,5 +62,4 @@
 }
 .player {
   grid-area: player;
-  min-height: 10rem;
 }

@@ -39,7 +39,7 @@ function App() {
       ),
       round.on(RoundEvent.BUSTED, () => setResult('wasted')),
       player.on(PlayerEvent.MOVE_END, ({ data }) => {
-        if (data.busted) setResult('You lose')
+        if (data.busted) setResult('busted')
         if (data.winner) setResult('You win!')
       }),
     ]

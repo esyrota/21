@@ -2,10 +2,10 @@
  * Represents a round of the game.
  */
 
+import { delay } from './util'
 import { CardCode } from './Card'
 import { Dealer } from './Dealer'
 import { Deck } from './Deck'
-import { Hand } from './Hand'
 import { Observable } from './Observable'
 import { Player, PlayerEvent } from './Player'
 import {
@@ -32,11 +32,15 @@ interface RoundState {
 }
 
 type RoundEventData = {
-  [RoundEvent.START]: any
+  [RoundEvent.START]: {
+    players: { name: string; cardsAmount: number; active: boolean }[]
+    dealer: { name: string; cardsAmount: number; active: boolean }
+    deck: { cardsAmount: number }
+  }
   [RoundEvent.UPDATE]: RoundState
   [RoundEvent.WINNER]: { names: string[] }
   [RoundEvent.BUSTED]: RoundState
-  [RoundEvent.END]: any
+  [RoundEvent.END]: undefined
 }
 
 export class Round extends Observable<RoundEvent, RoundEventData> {
@@ -44,11 +48,11 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
   private dealer: Dealer
   private players: Player[]
 
-  constructor(players: Player[], deck: Deck = new Deck()) {
+  constructor(players: Player[], deck: Deck = new Deck(), dealer = new Dealer('Dealer', deck)) {
     super()
     this.players = players
     this.deck = deck
-    this.dealer = new Dealer('Dealer', new Hand(), deck)
+    this.dealer = dealer
   }
 
   private start() {
@@ -70,17 +74,19 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
   }
 
   // play a round of the game
-  async play() {
+  async play(timeout: number = 0) {
     this.start()
-    this.deal()
-
-    const results = await this.playPlayers()
+    this.deal(timeout)
+    await delay(timeout)
+    const results = await this.playPlayers(timeout)
+    await delay(timeout)
 
     if (resultsHasBlackjack(results)) {
       this.declareWinner(results)
     }
 
-    const dealerResult = await this.dealer.play(getMaximumTotal(results))
+    const dealerResult = await this.dealer.play(timeout)
+    await delay(timeout)
 
     if (resultsBusted(results)) {
       this.declareBusted()
@@ -88,19 +94,23 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
       this.declareWinner([...results, dealerResult])
     }
 
+    await delay(timeout)
     this.end()
   }
 
   // deal cards to all players
-  async deal() {
+  async deal(timeout: number = 0) {
+    this.deck.reset()
+    await delay(timeout)
     for await (const player of this.players) {
+      player.resetCards()
       player.takeCards(this.deck.draw(2))
+      await delay(timeout)
     }
-    this.dealer.hand.hit(this.deck.draw(2))
+    this.dealer.takeCards()
   }
 
-  private async listenPlayer(player: Player): Promise<PlayerResult> {
-    player.play()
+  private async listenPlayer(player: Player, timeout = 0): Promise<PlayerResult> {
     return await new Promise((resolve) => {
       const destructors = [
         player.on(PlayerEvent.CHOOSE_HIT, () => {
@@ -115,14 +125,15 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
           resolve(player.result)
         }),
       ]
+      return player.play(timeout)
     })
   }
 
   // play all players
-  private async playPlayers() {
+  private async playPlayers(timeout = 0) {
     const results: PlayerResult[] = []
     for await (const player of this.players) {
-      const result = await this.listenPlayer(player)
+      const result = await this.listenPlayer(player, timeout)
       results.push(result)
       if (result.winner) return results
     }
@@ -140,9 +151,7 @@ export class Round extends Observable<RoundEvent, RoundEventData> {
     const bestResult = getMaximumTotal(results)
     const winners = results.filter((result) => !result.busted && result.total === bestResult)
     this.trigger(RoundEvent.WINNER, {
-      names: winners.map((result) =>
-        isPlayerResult(result) ? result.name : this.dealer.name,
-      ),
+      names: winners.map((result) => (isPlayerResult(result) ? result.name : this.dealer.name)),
     })
   }
 

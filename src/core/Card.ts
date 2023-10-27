@@ -18,7 +18,7 @@ export class Card {
 
   constructor(code: CardCode) {
     if (!code || typeof code !== 'string') throw new Error('Card code is not a string')
-    const [_, t, s] = /^(A|2|3|4|5|6|7|8|9|10|J|Q|K)(♠︎|♥︎|♦︎|♣︎)$/.exec(code) ?? []
+    const [, t, s] = /^(A|2|3|4|5|6|7|8|9|10|J|Q|K)(♠︎|♥︎|♦︎|♣︎)$/.exec(code) ?? []
     if (!t || !s) throw new Error(`Invalid card code: ${code}`)
     this.type = t as Type
     this.suit = s as Suit

@@ -1,0 +1,23 @@
+.card {
+  opacity: 0;
+  transform: translateY(10vh);
+  margin: 0;
+  padding: 0;
+  height: 12rem;
+  z-index: var(--index, 0);
+  animation: appear 1s ease 100ms 1;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--index) * 100ms);
+}
+
+@keyframes appear {
+  0% {
+    transform: translateY(5vh);
+    opacity: 0.5;
+  }
+  
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

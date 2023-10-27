@@ -1,6 +1,6 @@
-import { Card } from 'core/Card'
-import { Hand } from 'core/Hand'
-import { Player, PlayerEvent } from 'core/Player'
+import { Card } from './Card'
+import { Hand } from './Hand'
+import { Player, PlayerEvent } from './Player'
 
 describe('Player', () => {
   describe('new Player()', () => {

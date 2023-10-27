@@ -1,5 +1,5 @@
-import { Card } from 'core/Card'
-import { Hand } from 'core/Hand'
+import { Card } from './Card'
+import { Hand } from './Hand'
 
 describe('Hand', () => {
   describe('.cardAmount', () => {

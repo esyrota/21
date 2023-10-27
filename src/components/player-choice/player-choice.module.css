@@ -1,0 +1,25 @@
+.choice {
+  animation: appear 1s ease 100ms 1;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--index) * 100ms);
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+@keyframes appear {
+  0% {
+    transform: scale(97%);
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

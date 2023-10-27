@@ -6,6 +6,7 @@ import { PlayerResult } from 'core/PlayerResult'
 import { Card } from './Card'
 import { Hand } from './Hand'
 import { Observable } from './Observable'
+import { delay } from './util'
 // import { delay } from 'core/util'
 
 export const enum PlayerEvent {
@@ -29,7 +30,7 @@ export const enum PlayerChoise {
 }
 type PlayerEventData = {
   [PlayerEvent.GOT_CARDS]: { cards: string }
-  [PlayerEvent.RESET_CARDS]: {}
+  [PlayerEvent.RESET_CARDS]: undefined
   [PlayerEvent.MOVE_START]: void | null | undefined
   [PlayerEvent.MOVE_END]: PlayerResult
   [PlayerEvent.ASK_CHOICE]: void | null | undefined
@@ -48,6 +49,11 @@ export class Player extends Observable<PlayerEvent, PlayerEventData> {
     this.hand = hand
   }
 
+  resetCards() {
+    this.trigger(PlayerEvent.RESET_CARDS, undefined)
+    return this.hand.reset()
+  }
+
   takeCards(cards: Card[]) {
     this.hand.hit(cards)
     this.trigger(PlayerEvent.GOT_CARDS, { cards: this.hand.cardString })
@@ -62,11 +68,12 @@ export class Player extends Observable<PlayerEvent, PlayerEventData> {
     return this.hand.isBlackjack || this.hand.isBust || this.hand.total === 21
   }
 
-  private async doChoice(): Promise<void> {
+  private async doChoice(timeout = 0): Promise<void> {
+    await delay(timeout)
     if (this.isResultDefined) return
     const choice = await this.askChoise()
     if (choice === PlayerChoise.HIT) {
-      return this.doChoice()
+      return this.doChoice(timeout)
     }
   }
 
@@ -79,10 +86,10 @@ export class Player extends Observable<PlayerEvent, PlayerEventData> {
     }
   }
 
-  async play(): Promise<PlayerResult> {
+  async play(timeout = 0): Promise<PlayerResult> {
     this.trigger(PlayerEvent.MOVE_START, undefined)
     if (!this.hand.cardAmount) return this.terminate()
-    await this.doChoice()
+    await this.doChoice(timeout)
     this.trigger(PlayerEvent.MOVE_END, this.result)
     return this.result
   }
@@ -93,10 +100,10 @@ export class Player extends Observable<PlayerEvent, PlayerEventData> {
 
   async chooseHit(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      Promise.race([
-        this.wait(PlayerEvent.GOT_CARDS),
-        this.wait(PlayerEvent.DISCONNECT),
-      ]).then(({ event, data }) =>  event === PlayerEvent.DISCONNECT ? reject('DISCONNECT') : resolve(data.cards))
+      Promise.race([this.wait(PlayerEvent.GOT_CARDS), this.wait(PlayerEvent.DISCONNECT)]).then(
+        ({ event, data }) =>
+          event === PlayerEvent.DISCONNECT ? reject('DISCONNECT') : resolve(data.cards),
+      )
       this.trigger(PlayerEvent.CHOOSE_HIT, null)
     })
   }

@@ -13,6 +13,8 @@ const PLAYER_NAME = 'You'
 const DEALER_NAME = 'Dealer'
 const BUSTED = 'Busted!'
 const YOU_WIN = 'You win!'
+const DEALER_WIN = `${DEALER_NAME} wins!`
+const DRAW = 'Draw :/'
 
 function App() {
   const [deck, setDeck] = useState(() => new Deck())
@@ -41,11 +43,7 @@ function App() {
       round.on(RoundEvent.END, () => setRoundRunning(false)),
       round.on(RoundEvent.WINNER, ({ data }) =>
         setResult(
-          data.names.length > 1
-            ? 'DRAW'
-            : data.names[0] === DEALER_NAME
-            ? `${DEALER_NAME} wins!`
-            : YOU_WIN,
+          data.names.length > 1 ? DRAW : data.names[0] === DEALER_NAME ? DEALER_WIN : YOU_WIN,
         ),
       ),
       round.on(RoundEvent.BUSTED, () => setResult(BUSTED)),
@@ -65,7 +63,7 @@ function App() {
         <div className="desk">
           <Announcement>
             <h1>21</h1>
-            <div className="options">
+            <div>
               <button onClick={() => round.play(1000)}>play</button>
             </div>
           </Announcement>
@@ -81,7 +79,7 @@ function App() {
         {result ? (
           <Announcement>
             <h1>{result}</h1>
-            <div className="options">
+            <div>
               <button onClick={reset}>OK</button>
             </div>
           </Announcement>

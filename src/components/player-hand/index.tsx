@@ -32,15 +32,10 @@ export const PlayerHand: FC<Props> = ({ player, ...props }) => {
     <div {...props}>
       <div className={styles.hand} style={{ '--count': cards.length } as CSSProperties}>
         {cards.map((card, index) => (
-          <Card
-            key={card.toString()}
-            card={card}
-            className="card"
-            style={{ '--index': index } as CSSProperties}
-          />
+          <Card key={card.toString()} card={card} style={{ '--index': index } as CSSProperties} />
         ))}
       </div>
-      {cards.length > 0 && <div className="sum">Total: {player.result.total}</div>}
+      {cards.length > 1 && <div className={styles.sum}>{player.result.total}</div>}
     </div>
   )
 }

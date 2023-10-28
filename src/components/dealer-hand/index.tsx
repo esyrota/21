@@ -36,7 +36,7 @@ export const DealerHand: FC<Props> = ({ dealer, ...props }) => {
 
   return (
     <div {...props}>
-      <div className={styles.sum}>{dealer.result.total}</div>
+      {cards.length > 1 && <div className={styles.sum}>{dealer.result.total}</div>}
       {result?.busted && <div className="busted">BUSTED</div>}
       <div className={styles.hand} style={{ '--count': cards.length } as CSSProperties}>
         {cards.map((card, index) => (

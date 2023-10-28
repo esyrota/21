@@ -1,7 +1,6 @@
 /**
  * Represents a round of the game.
  */
-
 import { delay } from './util'
 import { CardCode } from './Card'
 import { Dealer } from './Dealer'

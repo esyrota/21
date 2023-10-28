@@ -2,7 +2,7 @@ export type ListenerArgs<EventType, EventData> = { data: EventData; event: Event
 export type Listener<EventType, EventData> = (e: ListenerArgs<EventType, EventData>) => void
 
 export class Observable<EventType extends string, EventDataTypes extends Record<EventType, any>> {
-  private listeners = new Map<EventType, Function[]>()
+  private listeners = new Map<EventType, Listener<any, any>[]>()
   private globalListeners: Listener<EventType, EventDataTypes[EventType]>[] = []
 
   async wait<T extends EventType>(event: T): Promise<ListenerArgs<T, EventDataTypes[T]>> {
@@ -33,12 +33,12 @@ export class Observable<EventType extends string, EventDataTypes extends Record<
     listeners.splice(listeners.indexOf(listener), 1)
   }
 
-  addListener(listener: Listener<any, any>): () => void {
+  addListener(listener: Listener<EventType, EventDataTypes[EventType]>): () => void {
     this.globalListeners.push(listener)
     return () => this.removeListener(listener)
   }
 
-  removeListener(listener: Listener<any, any>): void {
+  removeListener(listener: Listener<EventType, EventDataTypes[EventType]>): void {
     this.globalListeners.splice(this.globalListeners.indexOf(listener), 1)
   }
 

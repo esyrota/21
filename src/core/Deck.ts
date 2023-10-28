@@ -9,10 +9,10 @@ export const enum DeckEvent {
 }
 
 type DeckEventData = {
-  [DeckEvent.EMPTY]: any
+  [DeckEvent.EMPTY]: undefined
   [DeckEvent.SHUFFLE]: { amount: number }
   [DeckEvent.AMOUNT]: { amount: number }
-  [DeckEvent.RESET]: any
+  [DeckEvent.RESET]: { amount: number }
 }
 
 export class Deck extends Observable<DeckEvent, DeckEventData> {

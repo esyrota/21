@@ -22,7 +22,7 @@ function App() {
     setRoundRunning(false)
     const deck = new Deck()
     const dealer = new Dealer('dealer', deck)
-    const player = new Player('player1')
+    const player = new Player('You')
     setDeck(deck)
     setDealer(dealer)
     setPlayer(player)
@@ -37,7 +37,7 @@ function App() {
       round.on(RoundEvent.WINNER, ({ data }) =>
         setResult(data.names.length > 1 ? 'DRAW' : `${data.names[0]} win!`),
       ),
-      round.on(RoundEvent.BUSTED, () => setResult('wasted')),
+      round.on(RoundEvent.BUSTED, () => setResult('busted')),
       player.on(PlayerEvent.MOVE_END, ({ data }) => {
         if (data.busted) setResult('busted')
         if (data.winner) setResult('You win!')

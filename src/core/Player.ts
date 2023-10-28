@@ -65,14 +65,14 @@ export class Player extends Observable<PlayerEvent, PlayerEventData> {
   }
 
   private get isResultDefined() {
-    return this.hand.isBlackjack || this.hand.isBust || this.hand.total === 21
+    return this.hand.isBlackjack || this.hand.isBust
   }
 
   private async doChoice(timeout = 0): Promise<void> {
-    await delay(timeout)
     if (this.isResultDefined) return
     const choice = await this.askChoise()
     if (choice === PlayerChoise.HIT) {
+      await delay(timeout)
       return this.doChoice(timeout)
     }
   }

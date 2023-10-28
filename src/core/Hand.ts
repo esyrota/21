@@ -35,7 +35,7 @@ export class Hand {
 
   private get sum() {
     // get the minimum possible score
-    let sum = this.getMinTotal()
+    const sum = this.getMinTotal()
     // we can only use one ace as 11 (22 would bust)
     // so we only check extra 10 once
     if (this.hasWilds() && sum + 10 <= 21) {

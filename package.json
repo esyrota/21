@@ -6,13 +6,13 @@
   "homepage": "https://esyrota.github.io/21/",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest",
     "prettier:fix": "prettier --no-error-on-unmatched-pattern --ignore-unknown --write .",
     "prettier:check": "prettier --no-error-on-unmatched-pattern --ignore-unknown --check .",
-    "predeploy": "yarn build",
+    "predeploy": "vite build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

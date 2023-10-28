@@ -1,3 +1,4 @@
+import { delay } from 'core/util'
 import { Card } from './Card'
 import { Hand } from './Hand'
 import { Player, PlayerEvent } from './Player'
@@ -49,8 +50,10 @@ describe('Player', () => {
       const listener = jest.fn()
       const player = new Player('John')
       player.takeCards(Card.parseAll('Q♠︎,K♦︎'))
-      player.on(PlayerEvent.ASK_CHOICE, listener)
+      player.once(PlayerEvent.ASK_CHOICE, listener)
+      // don't wait
       player.play()
+      await delay(10)
       expect(listener).toBeCalledTimes(1)
       expect(listener).toBeCalledWith({ event: PlayerEvent.ASK_CHOICE })
     })
@@ -58,26 +61,14 @@ describe('Player', () => {
     test('CHOOSE_STAND is called', async () => {
       const listener = jest.fn()
       const player = new Player('John')
-      player.takeCards(Card.parseAll('Q♠︎,K♦︎'))
-      player.on(PlayerEvent.ASK_CHOICE, () => player.chooseStand())
       player.on(PlayerEvent.CHOOSE_STAND, listener)
+      player.takeCards(Card.parseAll('Q♠︎,K♦︎'))
+      // don't wait
       player.play()
+      await delay(10)
+      player.chooseStand()
       expect(listener).toBeCalledTimes(1)
     })
-
-    // test('ASK_CHOICE is called twice', async () => {
-    //   const listener = jest.fn()
-    //   const player = new Player('John')
-    //   player.takeCards(Card.parseAll('Q♠︎,7♦︎'))
-    //   player.on(PlayerEvent.ASK_CHOICE, listener)
-    //   player.once(PlayerEvent.ASK_CHOICE, () =>
-    //     player.chooseHit().then(() => {
-    //       player.takeCards(Card.parseAll('A♦︎'))
-    //     })
-    //   )
-    //   player.play()
-    //   expect(listener).toBeCalledTimes(1)
-    // })
 
     test('MOVE_END is called', async () => {
       const listener = jest.fn()

@@ -9,10 +9,15 @@ import { PlayerChoice } from './components/player-choice'
 import { DealerHand } from './components/dealer-hand'
 import { Announcement } from './components/announcement'
 
+const PLAYER_NAME = 'You'
+const DEALER_NAME = 'Dealer'
+const BUSTED = 'Busted!'
+const YOU_WIN = 'You win!'
+
 function App() {
   const [deck, setDeck] = useState(() => new Deck())
-  const [dealer, setDealer] = useState(() => new Dealer('dealer', deck))
-  const [player, setPlayer] = useState(() => new Player('You'))
+  const [dealer, setDealer] = useState(() => new Dealer(DEALER_NAME, deck))
+  const [player, setPlayer] = useState(() => new Player(PLAYER_NAME))
   const [round, setRound] = useState(() => new Round([player], deck, dealer))
   const [result, setResult] = useState<string>()
   const [isRoundRunning, setRoundRunning] = useState(false)
@@ -21,8 +26,8 @@ function App() {
     setResult(undefined)
     setRoundRunning(false)
     const deck = new Deck()
-    const dealer = new Dealer('dealer', deck)
-    const player = new Player('You')
+    const dealer = new Dealer(DEALER_NAME, deck)
+    const player = new Player(PLAYER_NAME)
     setDeck(deck)
     setDealer(dealer)
     setPlayer(player)
@@ -35,12 +40,18 @@ function App() {
       round.on(RoundEvent.START, () => setRoundRunning(true)),
       round.on(RoundEvent.END, () => setRoundRunning(false)),
       round.on(RoundEvent.WINNER, ({ data }) =>
-        setResult(data.names.length > 1 ? 'DRAW' : `${data.names[0]} win!`),
+        setResult(
+          data.names.length > 1
+            ? 'DRAW'
+            : data.names[0] === DEALER_NAME
+            ? `${DEALER_NAME} wins!`
+            : YOU_WIN,
+        ),
       ),
-      round.on(RoundEvent.BUSTED, () => setResult('busted')),
+      round.on(RoundEvent.BUSTED, () => setResult(BUSTED)),
       player.on(PlayerEvent.MOVE_END, ({ data }) => {
-        if (data.busted) setResult('busted')
-        if (data.winner) setResult('You win!')
+        if (data.busted) setResult(BUSTED)
+        if (data.winner) setResult(YOU_WIN)
       }),
     ]
     return () => {
